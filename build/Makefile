@@ -16,6 +16,7 @@ kernel-build:
 	mkdir -p $(KERNEL_OUT_DIR)
 	intercept-build make -C $(KERNEL_DIR) CROSS_COMPILE=$(CROSS_COMPILE) KBUILD_OUTPUT=$(KERNEL_OUT_DIR) ARCH=$(BOARD_ARCH) $(BOARD_NAME)_defconfig
 	intercept-build make -C $(KERNEL_DIR) CROSS_COMPILE=$(CROSS_COMPILE) KBUILD_OUTPUT=$(KERNEL_OUT_DIR) ARCH=$(BOARD_ARCH)
+	cp -f $(PWD)/compile_commands.json $(KERNEL_DIR)/
 
 .PHONY: run
 run:
@@ -23,3 +24,11 @@ run:
 	cp -f $(KERNEL_OUT_DIR)/arch/$(BOARD_ARCH)/boot/Image $(QEMU_DIR)/
 	cp -f $(KERNEL_OUT_DIR)/arch/$(BOARD_ARCH)/boot/dts/rockchip/rk3568.dtb $(QEMU_DIR)/
 	qemu-system-aarch64 -M virt -cpu cortex-a57 -nographic -kernel $(QEMU_DIR)/Image -dtb $(QEMU_DIR)/rk3568.dtb -s -S
+
+.PHONY: image
+image:
+	mkdir -p $(QEMU_DIR)
+	cp -f $(KERNEL_OUT_DIR)/arch/$(BOARD_ARCH)/boot/Image $(QEMU_DIR)/
+	cp -f $(KERNEL_OUT_DIR)/arch/$(BOARD_ARCH)/boot/dts/rockchip/rk3568.dtb $(QEMU_DIR)/
+	rm -f $(QEMU_DIR)/boot.img
+	/home/topeet/code/rk356x_linux/rkbin/tools/mkimage -f $(QEMU_DIR)/.tmp_its  -E -p 0x800 $(QEMU_DIR)/boot.img

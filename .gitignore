@@ -135,3 +135,4 @@ all.config
 build/out
 out/
 build/qemu
+compile_commands.json
