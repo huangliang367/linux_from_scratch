@@ -134,3 +134,4 @@ all.config
 *.kdev4
 build/out
 out/
+build/qemu
