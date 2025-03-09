@@ -13,6 +13,10 @@
 	#address-cells = <2>;
 	#size-cells = <2>;
 
+	aliases {
+		serial0 = &uart2;
+	};
+
 	cpus {
 		#address-cells = <2>;
 		#size-cells = <0>;
@@ -71,6 +75,30 @@
 		arm,no-tick-in-suspend;
 	};
 
+	sclk_clk: sclk {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <24000000>;
+	};
+
+	pclk_clk: pclk {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <24000000>;
+	};
+
+	uart2: serial@fe660000 {
+		compatible = "snps,dw-apb-uart";
+		reg = <0x0 0xfe660000 0x0 0x100>;
+		interrupt-parent = <&gic>;
+		interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&sclk_clk>, <&pclk_clk>;
+		clock-names = "baudclk", "apb_pclk";
+		reg-shift = <2>;
+		reg-io-width = <4>;
+		status = "okay";
+	};
+
 	reserved_memory: reserved-memory {
 		#address-cells = <2>;
 		#size-cells = <2>;
@@ -94,6 +122,7 @@
 	};
 
 	chosen {
-		bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0";
+		stdout-path = "serial0:115200n8";
+		bootargs = "earlycon=uart8250,mmio32,0xfe660000 root=/dev/ram0 rw";
 	};
 };
