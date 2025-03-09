@@ -136,3 +136,5 @@ build/out
 out/
 build/qemu
 compile_commands.json
+
+!build/initramfs/initramfs.cpio.gz
