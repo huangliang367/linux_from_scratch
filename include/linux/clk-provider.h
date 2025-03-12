@@ -360,6 +360,7 @@ struct clk_gate {
 
 #define CLK_GATE_SET_TO_DISABLE		BIT(0)
 #define CLK_GATE_HIWORD_MASK		BIT(1)
+#define CLK_GATE_NO_SET_RATE		BIT(3)
 
 extern const struct clk_ops clk_gate_ops;
 struct clk *clk_register_gate(struct device *dev, const char *name,
@@ -422,6 +423,7 @@ struct clk_divider {
 	u8		shift;
 	u8		width;
 	u8		flags;
+	unsigned long	max_prate;
 	const struct clk_div_table	*table;
 	spinlock_t	*lock;
 };
@@ -605,6 +607,7 @@ struct clk_fractional_divider {
 	u8		nwidth;
 	u32		nmask;
 	u8		flags;
+	unsigned long	max_prate;
 	void		(*approximation)(struct clk_hw *hw,
 				unsigned long rate, unsigned long *parent_rate,
 				unsigned long *m, unsigned long *n);
@@ -612,6 +615,7 @@ struct clk_fractional_divider {
 };
 
 #define to_clk_fd(_hw) container_of(_hw, struct clk_fractional_divider, hw)
+#define CLK_FRAC_DIVIDER_NO_LIMIT		BIT(2)
 
 extern const struct clk_ops clk_fractional_divider_ops;
 struct clk *clk_register_fractional_divider(struct device *dev,
@@ -679,6 +683,7 @@ struct clk_composite {
 	struct clk_hw	*mux_hw;
 	struct clk_hw	*rate_hw;
 	struct clk_hw	*gate_hw;
+	struct clk_hw	*brother_hw;
 
 	const struct clk_ops	*mux_ops;
 	const struct clk_ops	*rate_ops;

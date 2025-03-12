@@ -4,8 +4,10 @@
  */
 
 /dts-v1/;
+#include <dt-bindings/clock/rk3568-cru.h>
 #include <dt-bindings/interrupt-controller/arm-gic.h>
 #include <dt-bindings/interrupt-controller/irq.h>
+#include <dt-bindings/soc/rockchip,boot-mode.h>
 
 / {
 	compatible = "rockchip,rk3568-evb1-ddr4-v10", "rockchip,rk3568";
@@ -73,6 +75,104 @@
 			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
 			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
 		arm,no-tick-in-suspend;
+	};
+
+	grf: syscon@fdc60000 {
+		compatible = "rockchip,rk3568-grf", "syscon", "simple-mfd";
+		reg = <0x0 0xfdc60000 0x0 0x10000>;
+
+		io_domains: io-domains {
+			compatible = "rockchip,rk3568-io-voltage-domain";
+			status = "disabled";
+		};
+	};
+
+	pmugrf: syscon@fdc20000 {
+		compatible = "rockchip,rk3568-pmugrf", "syscon", "simple-mfd";
+		reg = <0x0 0xfdc20000 0x0 0x10000>;
+
+		pmu_io_domains: io-domains {
+			compatible = "rockchip,rk3568-pmu-io-voltage-domain";
+			status = "disabled";
+		};
+
+		reboot_mode: reboot-mode {
+			compatible = "syscon-reboot-mode";
+			offset = <0x200>;
+			mode-bootloader = <BOOT_BL_DOWNLOAD>;
+			mode-charge = <BOOT_CHARGING>;
+			mode-fastboot = <BOOT_FASTBOOT>;
+			mode-loader = <BOOT_BL_DOWNLOAD>;
+			mode-normal = <BOOT_NORMAL>;
+			mode-recovery = <BOOT_RECOVERY>;
+			mode-ums = <BOOT_UMS>;
+			mode-panic = <BOOT_PANIC>;
+			mode-watchdog = <BOOT_WATCHDOG>;
+		};
+	};
+
+	pmucru: clock-controller@fdd00000 {
+		compatible = "rockchip,rk3568-pmucru";
+		reg = <0x0 0xfdd00000 0x0 0x1000>;
+		rockchip,grf = <&grf>;
+		rockchip,pmugrf = <&pmugrf>;
+		#clock-cells = <1>;
+		#reset-cells = <1>;
+
+		assigned-clocks = <&pmucru SCLK_32K_IOE>;
+		assigned-clock-parents = <&pmucru CLK_RTC_32K>;
+	};
+
+	cru: clock-controller@fdd20000 {
+		compatible = "rockchip,rk3568-cru";
+		reg = <0x0 0xfdd20000 0x0 0x1000>;
+		rockchip,grf = <&grf>;
+		#clock-cells = <1>;
+		#reset-cells = <1>;
+
+		assigned-clocks =
+			<&pmucru CLK_RTC_32K>, <&cru ACLK_RKVDEC_PRE>,
+			<&cru CLK_RKVDEC_CORE>, <&pmucru PLL_PPLL>,
+			<&pmucru PCLK_PMU>, <&cru PLL_CPLL>,
+			<&cru CPLL_500M>, <&cru CPLL_333M>,
+			<&cru CPLL_250M>, <&cru CPLL_125M>,
+			<&cru CPLL_100M>, <&cru CPLL_62P5M>,
+			<&cru CPLL_50M>, <&cru CPLL_25M>,
+			<&cru PLL_GPLL>,
+			<&cru ACLK_BUS>, <&cru PCLK_BUS>,
+			<&cru ACLK_TOP_HIGH>, <&cru ACLK_TOP_LOW>,
+			<&cru HCLK_TOP>, <&cru PCLK_TOP>,
+			<&cru ACLK_PERIMID>, <&cru HCLK_PERIMID>,
+			<&cru PLL_NPLL>, <&cru ACLK_PIPE>,
+			<&cru PCLK_PIPE>, <&cru CLK_I2S0_8CH_TX_SRC>,
+			<&cru CLK_I2S0_8CH_RX_SRC>, <&cru CLK_I2S1_8CH_TX_SRC>,
+			<&cru CLK_I2S1_8CH_RX_SRC>, <&cru CLK_I2S2_2CH_SRC>,
+			<&cru CLK_I2S2_2CH_SRC>, <&cru CLK_I2S3_2CH_RX_SRC>,
+			<&cru CLK_I2S3_2CH_TX_SRC>, <&cru MCLK_SPDIF_8CH_SRC>,
+			<&cru ACLK_VOP>;
+		assigned-clock-rates =
+			<32768>, <300000000>,
+			<300000000>, <200000000>,
+			<100000000>, <1000000000>,
+			<500000000>, <333000000>,
+			<250000000>, <125000000>,
+			<100000000>, <62500000>,
+			<50000000>, <25000000>,
+			<1188000000>,
+			<150000000>, <100000000>,
+			<500000000>, <400000000>,
+			<150000000>, <100000000>,
+			<300000000>, <150000000>,
+			<1200000000>, <400000000>,
+			<100000000>, <1188000000>,
+			<1188000000>, <1188000000>,
+			<1188000000>, <1188000000>,
+			<1188000000>, <1188000000>,
+			<1188000000>, <1188000000>,
+			<500000000>;
+		assigned-clock-parents =
+			<&pmucru CLK_RTC32K_FRAC>, <&cru PLL_GPLL>,
+			<&cru PLL_GPLL>;
 	};
 
 	sclk_clk: sclk {

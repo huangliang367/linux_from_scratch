@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: GPL-2.0
+
+menu "Rockchip CPU selection"
+	depends on ARCH_ROCKCHIP
+
+config CPU_RK3568
+	bool "RK3566/8"
+
+endmenu
