@@ -138,3 +138,6 @@ build/qemu
 compile_commands.json
 
 !build/initramfs/initramfs.cpio.gz
+build/images/boot.img
+build/images/Image
+kernel_build
