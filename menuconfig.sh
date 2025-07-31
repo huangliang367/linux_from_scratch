@@ -5,8 +5,8 @@ CROSS_COMPILE=/home/topeet/code/rk356x_linux/prebuilts/gcc/linux-x86/aarch64/gcc
 
 
 intercept-build make CROSS_COMPILE=${CROSS_COMPILE} ARCH=${BOARD_ARCH} ${BOARD_NAME}_defconfig
+intercept-build make CROSS_COMPILE=${CROSS_COMPILE} ARCH=${BOARD_ARCH} menuconfig
 intercept-build make CROSS_COMPILE=${CROSS_COMPILE} ARCH=${BOARD_ARCH} -j$(nproc)
-
 
 mkdir -p build/images
 cp -f arch/${BOARD_ARCH}/boot/Image build/images/
