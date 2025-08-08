@@ -1,0 +1,15 @@
+{
+  "clangd.path": "/usr/bin/clangd",
+  "clangd.arguments": [
+    "--background-index",
+    "--all-scopes-completion",
+    "--cross-file-rename",
+    "--completion-style=detailed",
+    "--header-insertion=never",
+    "--clang-tidy",
+    "--compile-commands-dir=."
+  ],
+  "C_Cpp.intelliSenseEngine": "disabled",
+  "C_Cpp.autocomplete": "disabled",
+  "editor.semanticHighlighting.enabled": true
+}
