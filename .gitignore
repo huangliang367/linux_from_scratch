@@ -141,3 +141,6 @@ compile_commands.json
 build/images/boot.img
 build/images/Image
 kernel_build
+!.clangd
+!.vscode
+!.vscode/settings.json

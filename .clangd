@@ -1,0 +1,51 @@
+CompileFlags:
+  Add: [
+    # 常规宏定义（避免报错）
+    "-D__KERNEL__",
+    "-D__linux__",
+    "-D__GNUC__",
+    "-D__inline__=inline",
+    "-D__attribute__(x)=",
+    "-include", "linux/kconfig.h",
+
+    # 关闭某些内核不支持的警告
+    "-Wno-unused-parameter",
+    "-Wno-missing-field-initializers",
+    "-Wno-unused-but-set-variable",
+    "-Wno-pointer-sign",
+    "-Wno-type-limits",
+    "-Wno-sign-compare",
+
+    # 防止 clangd 将内核特定扩展识别为错误
+    "-fms-extensions",
+    "-fno-builtin",
+    "--gcc-toolchain=/home/hl/code/rk356x_linux/prebuilts/gcc/linux-x86/aarch64/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu/bin"
+  ]
+  Remove: [
+    # 去除 GCC 特定的优化参数
+    "-mno-global-merge",
+    "-fconserve-stack",
+    "-mno-thumb-interwork"
+  ]
+
+Diagnostics:
+  Suppress: [
+    "unused-parameter",
+    "undeclared-initializer"
+  ]
+
+Index:
+  Background: Build
+  StandardLibrary: Yes
+
+# 启用内核相关补全策略
+Completion:
+  AllScopes: true
+
+InlayHints:
+  Enabled: Yes
+  ParameterNames: Yes
+  DeducedTypes: Yes
+
+Hover:
+  ShowAKA: Yes
